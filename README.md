@@ -16,6 +16,7 @@
 ## 4.Idea for the project:
 ---
 <img width="455" alt="image" src="https://github.com/huynguyenquangce/HK231_TKLL/assets/99610485/f7e20bfa-112f-41e1-82c6-6cabecebe70b">
+
 ## 5.Demo:
 ---
 ```

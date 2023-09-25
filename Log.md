@@ -15,6 +15,10 @@
 ## Day3
 + Hardware selected:Raspberry Pi 4 Model B,Camera Raspberry Pi,speaker 3.5mm jack.
 + Software selected: Firebase, Vue.js, OpenCV.
+## Specific tasks for the next 2 weeks.
++ Implement website interface and connect it to Firebase
++ Run code for facial recognition with Raspberry Pi successfully 
++ The deadline is October 8th
 
 
 

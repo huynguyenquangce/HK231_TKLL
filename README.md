@@ -15,7 +15,7 @@
 + OpenCV
 ## 4.Idea for the project:
 ---
-<img width="455" alt="image" src="https://github.com/huynguyenquangce/HK231_TKLL/assets/99610485/f7e20bfa-112f-41e1-82c6-6cabecebe70b">
+<img width="455" alt="image" src="./Screenshot 2023-10-09 121056.png">
 
 ## 5.Demo:
 ---

@@ -1,21 +1,14 @@
-from datetime import datetime, time
+from datetime import time, timedelta
 
-# # Giả sử timeEvent là một chuỗi đã được lấy từ datetime.now()
-# timeEvent_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#
-# # Chuyển đổi timeEvent từ chuỗi thành đối tượng datetime
-# timeEvent = datetime.strptime(timeEvent_str, "%Y-%m-%d %H:%M:%S")
+checkIn_request = time(2, 16, 0)
+checkOut_request = time(2, 17, 5)
 
-# Thiết lập giờ đi làm
-work_start_time = time(9, 0, 0)
+# Tạo đối tượng timedelta bằng cách lấy sự chênh lệch giữa hai thời điểm
+time_difference = timedelta(hours=checkOut_request.hour - checkIn_request.hour,
+                            minutes=checkOut_request.minute - checkIn_request.minute,
+                            seconds=checkOut_request.second - checkIn_request.second)
 
+# Chuyển đổi khoảng thời gian từ timedelta sang giây
+seconds_difference = time_difference.total_seconds()
 
-
-timeEvent = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-timeEvent = datetime.strptime(timeEvent, "%Y-%m-%d %H:%M:%S")
-# So sánh chỉ phần thời gian của timeEvent với work_start_time
-isLate = timeEvent.time() > work_start_time
-print(type(timeEvent.time()))
-print(f"Thời điểm sự kiện: {timeEvent.time()}")
-print(f"Giờ đi làm: {work_start_time}")
-print(f"Đã trễ: {isLate}")
+print("Khoảng thời gian giữa hai thời điểm là:", seconds_difference, "giây")

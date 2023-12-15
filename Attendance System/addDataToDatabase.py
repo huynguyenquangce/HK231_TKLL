@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import storage
-from datetime import datetime,time
+from datetime import datetime,time,timedelta
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred,{
      'databaseURL':"https://fir-c20cd-default-rtdb.asia-southeast1.firebasedatabase.app/",
@@ -12,9 +12,14 @@ import os
 import glob
 
 # bucket = storage.bucket()
+# xử lí thời gian làm việc của công ty
 image_directory= "img/"
 checkIn_request = time(2, 16, 0)
 checkOut_request = time(2, 17, 5)
+time_difference = timedelta(hours=checkOut_request.hour - checkIn_request.hour,
+                            minutes=checkOut_request.minute - checkIn_request.minute,
+                            seconds=checkOut_request.second - checkIn_request.second)
+request_time = time_difference.total_seconds()*1000
 class Firebase:
     # def updateFlag(self):
     #     flag = db.reference('flags')
@@ -185,7 +190,8 @@ class Control:
             "Name": name,
             "ID": idstudent,
             "checkInTime": checkInTime,
-            "checkOutTime": checkOutTime
+            "checkOutTime": checkOutTime,
+            "request_time": request_time
         }
         history.child(str(formatted_date)).child(idstudent).set(newTurn)
 

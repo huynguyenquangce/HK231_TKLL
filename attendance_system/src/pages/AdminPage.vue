@@ -51,11 +51,13 @@
                 ><i class="fa fa-bar-chart" style="font-size: 24px"></i> Thống
                 kê</a
               >
+            
             </div>
           </div>
           <div></div>
           <div class="col-9">
             <div class="tab-content" id="v-pills-tabContent">
+              
               <div
                 class="tab-pane fade show active"
                 id="v-pills-home"
@@ -279,7 +281,7 @@
                         <th class="text-center">Họ và tên</th>
                         <th class="text-center">Vị trí</th>
                         <th class="text-center">Tham gia vào ngày</th>
-                        <th class="text-center">Tổng ngày có mặt</th>
+                        
                         <th class="text-center">Quốc tịch</th>
                         <th class="text-center">Thao tác</th>
                       </tr>
@@ -296,8 +298,7 @@
 
                         <td>{{ employee.Position }}</td>
                         <td>{{ employee.createAt }}</td>
-                        <td>{{ employee.total_attendance
- }}</td>
+                       
    <td>{{ employee.Hometown
  }}</td>
  
@@ -355,13 +356,9 @@
 
                         <td>{{ e.Name }}</td>
                         <td>
-                          {{
-                            new Date(e.checkOutTime) -
-                              new Date(e.checkInTime) >=
-                            5000
-                              ? "Có mặt"
-                              : "Vắng mặt"
-                          }}
+                          <span v-if="e.isLate === false && e.isSooner === false">Đúng giờ</span>
+  <span v-else-if="e.isLate === true && e.isSooner === false">Trễ giờ</span>
+  <span v-else>Vắng</span>
                         </td>
                         <td>{{ e.checkInTime }}</td>
                         <td>{{ e.checkOutTime }}</td>
@@ -383,6 +380,7 @@
                   <h1>Thống kê</h1>
                   <section class="content">
                     <div class="container-fluid">
+                      
                       <div class="row">
                         <div class="col-md-6 grid-margin stretch-card">
                           <div class="card bigger tale-bg">
@@ -422,7 +420,7 @@
                             <div class="col-md-6 mb-1 stretch-card transparent">
                               <div class="card card2 card-dark-blue">
                                 <div class="card-body">
-                                  <p class="mb-1">Có mặt hôm nay</p>
+                                  <p class="mb-1">Đúng giờ hôm nay</p>
                                   <p>{{ compareDate() }}</p>
                                 </div>
                               </div>
@@ -435,14 +433,14 @@
                               <div class="card card3 card-light-blue">
                                 <div class="card-body">
                                   <p class="mb-1">Vắng mặt hôm nay</p>
-                                  <p>{{ totalEmployee() - compareDate() }}</p>
+                                  <p>{{ totalEmployee() - (compareDate()+ treGio()) }}</p>
                                 </div>
                               </div>
                             </div>
                             <div class="col-md-6 stretch-card transparent">
                               <div class="card card4 card-light-danger">
                                 <div class="card-body">
-                                  <p class="mb-1">Tỉ lệ có mặt hôm nay </p>
+                                  <p class="mb-1">Tỉ lệ đúng giờ hôm nay </p>
                                   <p>
                                     {{
                                       tinhPhanTram(
@@ -456,19 +454,49 @@
                             </div>
 
                           </div>
+                          <div class="row">
+                            <div
+                              class="col-md-6 mb-1 mb-lg-0 stretch-card transparent"
+                            >
+                              <div class="card card5 card-light-blue">
+                                <div class="card-body">
+                                  <p class="mb-1">Trễ giờ hôm nay</p>
+                                  <p>{{ treGio() }}</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-6 stretch-card transparent">
+                              <div class="card card6 card-light-danger">
+                                <div class="card-body">
+                                  <p class="mb-1">Tỉ lệ trễ giờ hôm nay </p>
+                                  <p>
+                                    {{
+                                      tinhPhanTram(
+                                        treGio(),
+                                        totalEmployee()
+                                      )
+                                    }} <i class="fa fa-percent"></i>  
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
                         </div>
                         <!-- Đồ thị -->
-
+                        <div>
+                             <div clas="row"> <h4 class="">{{ renderNgay() }}</h4>
+                            </div></div>
+                        <div class="row">
+                          
                         <div class="mt-5 col-md-6 grid-margin transparent">
                           <div class="row text-center">
-                            <div>
-                              <h4 class="">{{ renderNgay() }}</h4>
-                            </div>
+                           
                             <div
                               class="col-md-6 mb-4"
                               style="width: 600px; height: 300px"
                             >
-                              Tỉ lệ có mặt trong ngày
+                              Tỉ lệ đúng giờ trong ngày
                               <Pie :data="pieData" :options="pieOptions" />
                             </div>
 
@@ -476,33 +504,73 @@
                               class="col-md-6 mb-4"
                               style="width: 600px; height: 300px"
                             >
-                              Tỉ lệ có mặt trong tuần
+                              Tỉ lệ đúng giờ trong tuần
                               <Bar :data="chartData" :options="chartOptions" />
                             </div>
+                            <div
+                              class="col-md-6 mb-4 mt-4"
+                              style="width: 300px; height: 300px"
+                            >
+                              Tỉ lệ trễ giờ trong tuần
+                              <Line :data="latechartData" :options="chartOptions" />
+                            </div>
+                            <div
+                              class="col-md-6 mb-4 mt-4"
+                              style="width: 600px; height: 300px"
+                            >
+                              Tỉ lệ trễ giờ trong tuần
+                              <Bar :data="latechartData" :options="chartOptions" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="mt-5 col-md-6 grid-margin transparent">
+                          <div class="row text-center">
+                            
                             <div
                               class="col-md-6 mb-4"
                               style="width: 300px; height: 300px"
                             >
-                              Tỉ lệ có mặt trong tuần
+                              Tỉ lệ đúng giờ trong tuần
                               <Line :data="chartData" :options="chartOptions" />
                             </div>
                             <div
                               class="col-md-6 mb-4"
                               style="width: 600px; height: 300px"
                             >
-                              Tỉ lệ có mặt trong tuần
+                              Tỉ lệ đúng giờ trong tuần
                               <Radar
                                 :data="chartData"
                                 :options="radarOptions"
                               />
                             </div>
+                           
+                            
+                           
                           </div>
+                        </div>
                         </div>
                       </div>
                     </div>
                   </section>
                 </div>
               </div>
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
+
+
+
             </div>
           </div>
         </div>
@@ -611,17 +679,54 @@ export default {
         ],
         datasets: [
           {
-            label: "Phần trăm nhân viên có mặt ",
+            label: "Phần trăm nhân viên đúng giờ ",
             backgroundColor: "#80f87979",
             data: [],
           },
         ],
       },
-      pieData: {
-        labels: ["Có mặt", "Vắng"],
+      latechartData: {
+        labels: [
+          "thứ 2",
+          "thứ 3",
+          "thứ 4",
+          "thứ 5",
+          "thứ 6",
+          "thứ 7",
+          "Chủ nhật",
+        ],
         datasets: [
           {
-            backgroundColor: ["#41B883", "#DD1B16"],
+            label: "Phần trăm nhân viên trễ giờ ",
+            backgroundColor: "#FFFF0079",
+            data: [],
+          },
+        ],
+      },
+
+      absentchartData: {
+        labels: [
+          "thứ 2",
+          "thứ 3",
+          "thứ 4",
+          "thứ 5",
+          "thứ 6",
+          "thứ 7",
+          "Chủ nhật",
+        ],
+        datasets: [
+          {
+            label: "Phần trăm nhân viên vắng  ",
+            backgroundColor: "#FF000080",
+            data: [],
+          },
+        ],
+      },
+      pieData: {
+        labels: ["Đúng giờ","Trễ", "Vắng"],
+        datasets: [
+          {
+            backgroundColor: ["#41B883","#FFFF00", "#DD1B16"],
             data: [],
           },
         ],
@@ -705,8 +810,9 @@ export default {
     "$store.state.history.items": function () {
     
       this.pieData.datasets[0].data[0] = this.compareDate();
-      this.pieData.datasets[0].data[1] =
-        this.totalEmployee() - this.compareDate();
+      this.pieData.datasets[0].data[1] = this.treGio();
+      this.pieData.datasets[0].data[2] =
+        this.totalEmployee() - (this.compareDate()+this.treGio());
       this.chartData.datasets[0].data[0] = this.tinhThu2();
       this.chartData.datasets[0].data[1] = this.tinhThu3();
       this.chartData.datasets[0].data[2] = this.tinhThu4();
@@ -714,6 +820,21 @@ export default {
       this.chartData.datasets[0].data[4] = this.tinhThu6();
       this.chartData.datasets[0].data[5] = this.tinhThu7();
       this.chartData.datasets[0].data[6] = this.tinhChuNhat();
+      
+
+
+
+
+      this.latechartData.datasets[0].data[0] = this.tinhThu2Tre();
+      this.latechartData.datasets[0].data[1] = this.tinhThu3Tre();
+      this.latechartData.datasets[0].data[2] = this.tinhThu4Tre();
+      this.latechartData.datasets[0].data[3] = this.tinhThu5Tre();
+      this.latechartData.datasets[0].data[4] = this.tinhThu6Tre();
+      this.latechartData.datasets[0].data[5] = this.tinhThu7Tre();
+      this.latechartData.datasets[0].data[6] = this.tinhChuNhatTre();
+
+
+     
     },
   },
   computed: {
@@ -814,13 +935,45 @@ export default {
 
         for (let id in specificObject) {
           let item = specificObject[id];
+             if (item.isLate===false&&item.isSooner===false)
+             {
 
-          if (
-            new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-            5000
-          ) {
             count += 1;
-          }
+         
+
+             }
+        }
+        return count;
+      } else {
+        return 0;
+      }
+    },
+    treGio() {
+      var today = new Date();
+      var day = today.getDate();
+      var month = today.getMonth() + 1;
+      var year = today.getFullYear();
+      var formattedDate = day + "-" + month + "-" + year;
+
+      // const index = Object.keys(this.$store.state.history.items);
+     
+
+      if (Object.keys(this.$store.state.history.items)[0] == formattedDate) {
+        let data = this.$store.state.history.items;
+        let specificObject =
+          data[Object.keys(this.$store.state.history.items)[0]];
+
+        let count = 0;
+
+        for (let id in specificObject) {
+          let item = specificObject[id];
+             if (item.isLate===true&&item.isSooner===false)
+             {
+
+            count += 1;
+         
+
+             }
         }
         return count;
       } else {
@@ -854,12 +1007,19 @@ export default {
           for (let id in historyItems[ngay]) {
             let item = historyItems[ngay][id];
             
-            if (
-              new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-              5000
-            ) {
-              diemdanh++;
-            }
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===false&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
           }
           phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
         }
@@ -880,12 +1040,19 @@ export default {
           for (let id in historyItems[ngay]) {
             let item = historyItems[ngay][id];
            
-            if (
-              new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-              5000
-            ) {
-              diemdanh++;
-            }
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===false&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
           }
           phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
         }
@@ -905,12 +1072,20 @@ export default {
           for (let id in historyItems[ngay]) {
             let item = historyItems[ngay][id];
             
-            if (
-              new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-              5000
-            ) {
-              diemdanh++;
-            }
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===false&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+            
           }
           phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
         }
@@ -930,12 +1105,19 @@ export default {
           for (let id in historyItems[ngay]) {
             let item = historyItems[ngay][id];
             
-            if (
-              new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-              5000
-            ) {
-              diemdanh++;
-            }
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===false&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
           }
           phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
         }
@@ -954,12 +1136,19 @@ export default {
           for (let id in historyItems[ngay]) {
             let item = historyItems[ngay][id];
             
-            if (
-              new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-              5000
-            ) {
-              diemdanh++;
-            }
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===false&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
           }
           phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
         }
@@ -978,12 +1167,19 @@ export default {
           for (let id in historyItems[ngay]) {
             let item = historyItems[ngay][id];
            
-            if (
-              new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-              5000
-            ) {
-              diemdanh++;
-            }
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===false&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
           }
           phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
         }
@@ -1002,12 +1198,241 @@ export default {
           for (let id in historyItems[ngay]) {
             let item = historyItems[ngay][id];
            
-            if (
-              new Date(item.checkOutTime) - new Date(item.checkInTime) >=
-              5000
-            ) {
-              diemdanh++;
-            }
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===false&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+          }
+          phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
+        }
+      }
+      return phanTramMoiNgay / countngay;
+    },
+    tinhChuNhatTre() {
+      let diemdanh = 0;
+      let phanTramMoiNgay = 0;
+      let countngay = 0;
+      let historyItems = this.$store.state.history.items;
+
+      for (let ngay in historyItems) {
+        if (this.chuyenDoiNgayTrongTuan(ngay) === "Chủ Nhật") {
+          countngay++;
+          for (let id in historyItems[ngay]) {
+            let item = historyItems[ngay][id];
+            
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===true&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+          }
+          phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
+        }
+      }
+      return phanTramMoiNgay / countngay;
+    },
+    tinhThu7Tre() {
+      
+
+      let diemdanh = 0;
+      let phanTramMoiNgay = 0;
+      let countngay = 0;
+      let historyItems = this.$store.state.history.items;
+
+      for (let ngay in historyItems) {
+        if (this.chuyenDoiNgayTrongTuan(ngay) === "Thứ Bảy") {
+          countngay++;
+          for (let id in historyItems[ngay]) {
+            let item = historyItems[ngay][id];
+           
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===true&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+          }
+          phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
+        }
+      }
+      return phanTramMoiNgay / countngay;
+    },
+    tinhThu6Tre() {
+      
+      let diemdanh = 0;
+      let phanTramMoiNgay = 0;
+      let countngay = 0;
+      let historyItems = this.$store.state.history.items;
+
+      for (let ngay in historyItems) {
+        if (this.chuyenDoiNgayTrongTuan(ngay) === "Thứ Sáu") {
+          countngay++;
+          for (let id in historyItems[ngay]) {
+            let item = historyItems[ngay][id];
+            
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===true&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+            
+          }
+          phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
+        }
+      }
+      return phanTramMoiNgay / countngay;
+    },
+    tinhThu5Tre() {
+      
+      let diemdanh = 0;
+      let phanTramMoiNgay = 0;
+      let countngay = 0;
+      let historyItems = this.$store.state.history.items;
+
+      for (let ngay in historyItems) {
+        if (this.chuyenDoiNgayTrongTuan(ngay) === "Thứ Năm") {
+          countngay++;
+          for (let id in historyItems[ngay]) {
+            let item = historyItems[ngay][id];
+            
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===true&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+          }
+          phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
+        }
+      }
+      return phanTramMoiNgay / countngay;
+    },
+    tinhThu4Tre() {
+      let diemdanh = 0;
+      let phanTramMoiNgay = 0;
+      let countngay = 0;
+      let historyItems = this.$store.state.history.items;
+
+      for (let ngay in historyItems) {
+        if (this.chuyenDoiNgayTrongTuan(ngay) === "Thứ Tư") {
+          countngay++;
+          for (let id in historyItems[ngay]) {
+            let item = historyItems[ngay][id];
+            
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===true&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+          }
+          phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
+        }
+      }
+      return phanTramMoiNgay / countngay;
+    },
+    tinhThu3Tre() {
+      let diemdanh = 0;
+      let phanTramMoiNgay = 0;
+      let countngay = 0;
+      let historyItems = this.$store.state.history.items;
+
+      for (let ngay in historyItems) {
+        if (this.chuyenDoiNgayTrongTuan(ngay) === "Thứ Ba") {
+          countngay++;
+          for (let id in historyItems[ngay]) {
+            let item = historyItems[ngay][id];
+           
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===true&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
+          }
+          phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
+        }
+      }
+      return phanTramMoiNgay / countngay;
+    },
+    tinhThu2Tre() {
+      let diemdanh = 0;
+      let phanTramMoiNgay = 0;
+      let countngay = 0;
+      let historyItems = this.$store.state.history.items;
+
+      for (let ngay in historyItems) {
+        if (this.chuyenDoiNgayTrongTuan(ngay) === "Thứ Hai") {
+          countngay++;
+          for (let id in historyItems[ngay]) {
+            let item = historyItems[ngay][id];
+           
+            // if (
+            //   new Date(item.checkOutTime) - new Date(item.checkInTime) >=
+            //   5000
+            // ) {
+            //   diemdanh++;
+            // }
+            if (item.isLate===true&&item.isSooner===false)
+             {
+
+              diemdanh += 1;
+         
+
+             }
           }
           phanTramMoiNgay += (diemdanh / this.totalEmployee()) * 100;
         }
@@ -1092,11 +1517,17 @@ export default {
   background-color: #9ff4df;
 }
 .card2 {
-  background-color: #f996ae;
+  background-color: #6BCEEE;
 }
 
 .card3 {
+  background-color: #f996ae;
+}
+.card5 {
   background-color: #f6f0a3;
+}
+.card6 {
+  background-color: #FFDFD3;
 }
 .card4 {
   background-color: #d9b6fd;
@@ -1237,6 +1668,17 @@ p.subtitle {
 }
 
 /* Thêm các tùy chỉnh CSS khác theo ý bạn... */
+
+
+
+
+
+
+
+
+
+
+
 
 
 </style>
